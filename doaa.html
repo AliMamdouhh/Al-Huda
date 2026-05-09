@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>علي ودعاء | الملحمة السينمائية الكاملة</title>
+
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&family=Tajawal:wght@300;500;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Cutting-Edge Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        iosBlack: '#000000',
+                        neonCyan: '#00f2ff',
+                        neonPink: '#ff0077',
+                        glass: 'rgba(255, 255, 255, 0.03)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar { display: none; }
+
+        /* Bento Architecture */
+        .bento-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: minmax(120px, auto);
+            gap: 1.25rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        .card {
+            background: rgba(18, 18, 20, 0.8);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            opacity: 0.2;
+            transform: translateY(20px);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .card.playing-cyan { border-color: #00f2ff; box-shadow: 0 0 40px rgba(0, 242, 255, 0.15); }
+        .card.playing-pink { border-color: #ff0077; box-shadow: 0 0 40px rgba(255, 0, 119, 0.15); }
+
+        /* Typography */
+        .lyric-line {
+            display: block;
+            opacity: 0.3;
+            transition: all 0.4s ease;
+            transform: scale(0.98);
+        }
+        .lyric-line.highlight {
+            opacity: 1;
+            color: #fff;
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+        }
+
+        .mask-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), transparent 0%, #000 70%);
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.4;
+        }
+
+        #start-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="mask-overlay" id="mask"></div>
+
+    <!-- Start Experience -->
+    <div id="start-overlay">
+        <h1 class="text-6xl md:text-8xl font-black font-tajawal mb-6 tracking-tighter">وعد فبراير</h1>
+        <p class="text-gray-500 mb-12 text-xl font-light italic">تجربة بصرية تفاعلية كاملة</p>
+        <button id="play-btn" class="group relative px-12 py-5 bg-white text-black rounded-full font-bold text-2xl overflow-hidden transition-all hover:scale-110">
+            <span class="relative z-10">ابدأ الحكاية</span>
+            <div class="absolute inset-0 bg-neonCyan translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+        </button>
+    </div>
+
+    <!-- Timeline Progress -->
+    <div class="fixed top-0 left-0 w-full h-1 z-[60]">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-neonCyan to-neonPink w-0 transition-all duration-100"></div>
+    </div>
+
+    <main class="relative z-10">
+        <div class="bento-container">
+            
+            <!-- Phase 1: November Silence -->
+            <div class="card col-span-12 md:col-span-8 row-span-4 flex flex-col justify-end" id="scene-1">
+                <span class="text-neonCyan font-bold tracking-widest mb-4">27 نوفمبر</span>
+                <h2 class="text-5xl md:text-7xl font-black font-tajawal leading-tight">
+                    <span class="lyric-line" data-time="0.5">في سبعة وعشرين نوفمبر</span>
+                    <span class="lyric-line mt-2 text-cyan-400" data-time="3.5">الدنيا كانت ساكتة</span>
+                    <span class="lyric-line text-sm text-gray-500 mt-1" data-time="5.5">(ساكتة...)</span>
+                </h2>
+                <i class="fa-solid fa-wind absolute top-10 right-10 text-9xl opacity-5"></i>
+            </div>
+
+            <!-- Phase 2: First Call -->
+            <div class="card col-span-12 md:col-span-4 row-span-2 flex items-center gap-6" id="scene-2">
+                <div class="text-4xl text-neonCyan animate-pulse"><i class="fa-solid fa-phone"></i></div>
+                <div>
+                    <h3 class="lyric-line text-2xl font-bold" data-time="7.2">أول مكالمة</h3>
+                    <p class="lyric-line text-gray-400" data-time="9">علي قلبه كان لسه في حتة</p>
+                    <p class="lyric-line text-xs text-gray-600 mt-1" data-time="11">(لسه في حتة...)</p>
+                </div>
+            </div>
+
+            <!-- Phase 3: Doaa Arrival -->
+            <div class="card col-span-12 md:col-span-4 row-span-4 flex flex-col items-center text-center justify-center" id="scene-3">
+                <div class="relative w-32 h-32 mb-8">
+                    <div class="absolute inset-0 bg-neonPink blur-3xl opacity-20 animate-pulse"></div>
+                    <div class="relative z-10 w-full h-full rounded-full border-2 border-neonPink flex items-center justify-center">
+                        <i class="fa-solid fa-star text-4xl text-neonPink"></i>
+                    </div>
+                </div>
+                <h2 class="lyric-line text-4xl font-black" data-time="12.5">بنت اسمها دعاء</h2>
+                <p class="lyric-line text-xl text-gray-400 mt-4" data-time="15.5">خلت الروح ترجع بريئة</p>
+            </div>
+
+            <!-- Phase 4: The Wave -->
+            <div class="card col-span-12 md:col-span-8 row-span-2 flex flex-col justify-center" id="scene-4">
+                <h3 class="text-4xl font-tajawal">
+                    <span class="lyric-line inline" data-time="17.8">مسالمة زي موجة،</span>
+                    <span class="lyric-line inline text-neonCyan" data-time="20">بتهدي نار الحقيقة</span>
+                </h3>
+                <p class="lyric-line text-gray-600 italic mt-2" data-time="22.5">(نار الحقيقة...)</p>
+            </div>
+
+            <!-- Phase 5: February 6th Big Transition -->
+            <div class="card col-span-12 row-span-4 flex flex-col items-center justify-center text-center" id="scene-5">
+                <div class="text-neonPink font-bold mb-6 tracking-widest uppercase">06 February</div>
+                <h2 class="text-6xl md:text-8xl font-black mb-8 leading-none">
+                    <span class="lyric-line" data-time="24">والنهاية صارت بداية</span>
+                    <span class="lyric-line text-neonPink" data-time="27">في ستة فبراير!</span>
+                </h2>
+                <p class="lyric-line text-2xl text-gray-400" data-time="29">كملنا نص الحكاية والكون علينا داير!</p>
+            </div>
+
+            <!-- Phase 6: Steps & Song -->
+            <div class="card col-span-12 md:col-span-6 row-span-2 flex items-center justify-between" id="scene-6">
+                <div>
+                    <h3 class="lyric-line text-3xl font-bold" data-time="33">خطوة ورا خطوة</h3>
+                    <p class="lyric-line text-2xl text-neonPink font-black mt-2" data-time="35.5">وبقينا لبعض أحلى غنوة!</p>
+                </div>
+                <div class="text-5xl opacity-20"><i class="fa-solid fa-music"></i></div>
+            </div>
+
+            <!-- Phase 7: Time Count -->
+            <div class="card col-span-12 md:col-span-6 row-span-2 flex flex-col justify-center" id="scene-7">
+                <h3 class="lyric-line text-2xl font-light" data-time="38.5">من نوفمبر لفبراير</h3>
+                <p class="lyric-line text-xl mt-2" data-time="41">كام يوم فيهم اتقابلنا</p>
+                <div class="w-full h-1 bg-white/10 mt-4 rounded-full overflow-hidden">
+                    <div class="h-full bg-neonCyan w-3/4"></div>
+                </div>
+            </div>
+
+            <!-- Phase 8: Phone to Madness -->
+            <div class="card col-span-12 md:col-span-5 row-span-2 text-center flex flex-col justify-center" id="scene-8">
+                <p class="lyric-line text-lg text-gray-500" data-time="44">من رنة تليفون</p>
+                <h3 class="lyric-line text-3xl font-black text-neonCyan" data-time="46">لحد ما بجد اتجننا</h3>
+            </div>
+
+            <!-- Phase 9: The Ring & Science -->
+            <div class="card col-span-12 md:col-span-7 row-span-4 flex flex-col justify-center p-12" id="scene-9">
+                <div class="flex items-center gap-8">
+                    <div class="text-7xl"><i class="fa-solid fa-ring"></i></div>
+                    <div>
+                        <h3 class="lyric-line text-4xl font-black" data-time="48.5">من أول دبلة</h3>
+                        <p class="lyric-line text-xl text-gray-400 mt-2" data-time="51">دعاء في إيدي لمست كل حلم</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-white/5">
+                    <p class="lyric-line text-2xl leading-relaxed" data-time="54">علي معاكي كمل، وبقينا في وسط الزحام علم</p>
+                </div>
+            </div>
+
+            <!-- Repeat Chorus Phase -->
+            <div class="card col-span-12 row-span-3 flex flex-col items-center justify-center text-center bg-neonPink/5" id="scene-10">
+                <h2 class="lyric-line text-4xl md:text-6xl font-bold mb-4" data-time="59">والنهاية صارت بداية، في ستة فبراير!</h2>
+                <p class="lyric-line text-2xl text-gray-500" data-time="63">كملنا نص الحكاية، والكون علينا داير!</p>
+            </div>
+
+            <!-- Phase 10: Spiritual Souls -->
+            <div class="card col-span-12 md:col-span-6 row-span-4 flex flex-col items-center justify-center" id="scene-11">
+                <h2 class="lyric-line text-5xl font-black mb-8" data-time="68">يا دعاء يا روح الروح...</h2>
+                <p class="lyric-line text-2xl text-neonPink text-center" data-time="72">يا دعاء حلم بكرة بيكي بوضوح...</p>
+                <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neonPink/10 via-transparent to-transparent"></div>
+            </div>
+
+            <!-- Phase 11: The Promise -->
+            <div class="card col-span-12 md:col-span-6 row-span-4 flex flex-col items-center justify-center" id="scene-12">
+                <h2 class="lyric-line text-5xl font-black mb-8" data-time="77">يا علي مسكت إيدك...</h2>
+                <p class="lyric-line text-2xl text-neonCyan text-center" data-time="81">يا علي وعدي ليكي، عمري كله في إيدك</p>
+                <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neonCyan/10 via-transparent to-transparent"></div>
+            </div>
+
+            <!-- Final Outro -->
+            <div class="card col-span-12 row-span-5 flex flex-col items-center justify-center text-center" id="scene-13">
+                <div class="text-gray-600 mb-8 tracking-[1em] uppercase lyric-line" data-time="86">(همم... همم...)</div>
+                <h1 class="text-6xl md:text-9xl font-black font-tajawal mb-8">
+                    <span class="lyric-line" data-time="90">دعاء وعلي...</span>
+                    <span class="lyric-line text-neonPink mt-4" data-time="94">حكاية لسه بتبدأ</span>
+                </h1>
+                <div class="flex flex-col items-center">
+                    <p class="lyric-line text-3xl font-bold mb-4" data-time="97">ستة فبراير... أحلى بداية</p>
+                    <p class="lyric-line text-neonCyan text-xl italic" data-time="100">(أحلى بداية...)</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const audioUrl = 'https://github.com/AliMamdouhh/Al-Huda/raw/refs/heads/main/%D9%88%D8%B9%D8%AF%20%D9%81%D8%A8%D8%B1%D8%A7%D9%8A%D8%B1_5dd5d5be-f0f5-486d-af50-8faf3a6272f2.mp3';
+        
+        let sound;
+        const playBtn = document.getElementById('play-btn');
+        const overlay = document.getElementById('start-overlay');
+        const progressBar = document.getElementById('progress-bar');
+        const mask = document.getElementById('mask');
+
+        // 1. Particle Background (Three.js)
+        let scene, camera, renderer, points;
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const geo = new THREE.BufferGeometry();
+            const pos = [];
+            for(let i=0; i<3000; i++) {
+                pos.push(Math.random()*2000-1000, Math.random()*2000-1000, Math.random()*2000-1000);
+            }
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 2, transparent: true, opacity: 0.2 });
+            points = new THREE.Points(geo, mat);
+            scene.add(points);
+            camera.position.z = 500;
+        }
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            points.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+
+        initThree(); animateThree();
+
+        // 2. Audio & Sync Logic
+        playBtn.addEventListener('click', () => {
+            gsap.to(overlay, { opacity: 0, duration: 1, onComplete: () => overlay.style.display = 'none' });
+            
+            sound = new Howl({
+                src: [audioUrl],
+                html5: true,
+                onplay: () => requestAnimationFrame(sync)
+            });
+            sound.play();
+        });
+
+        function sync() {
+            if(!sound.playing()) return;
+            const time = sound.seek();
+            const progress = (time / sound.duration()) * 100;
+            progressBar.style.width = progress + '%';
+
+            // Sync Lyrics
+            document.querySelectorAll('.lyric-line').forEach(el => {
+                const t = parseFloat(el.dataset.time);
+                if(time >= t) {
+                    el.classList.add('highlight');
+                    const card = el.closest('.card');
+                    if(card && !card.classList.contains('active')) {
+                        card.classList.add('active');
+                        // Accent color based on time
+                        if(time > 23) card.classList.add('playing-pink');
+                        else card.classList.add('playing-cyan');
+                        
+                        gsap.from(card, { scale: 0.95, duration: 0.8, ease: "back.out(2)" });
+                    }
+                } else {
+                    el.classList.remove('highlight');
+                }
+            });
+
+            // Dynamic Camera & Particles based on Phase
+            if(time > 23) {
+                points.material.color.setHex(0xff0077);
+                points.rotation.z += 0.005;
+            } else {
+                points.material.color.setHex(0x00f2ff);
+            }
+
+            requestAnimationFrame(sync);
+        }
+
+        // 3. Interactions
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            mask.style.setProperty('--x', x + '%');
+            mask.style.setProperty('--y', y + '%');
+
+            // Subtle parallax for active cards
+            gsap.to('.card.active', {
+                rotationY: (e.clientX - window.innerWidth/2) / 100,
+                rotationX: (window.innerHeight/2 - e.clientY) / 100,
+                duration: 0.5
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
